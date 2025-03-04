@@ -47,6 +47,7 @@ This Bash [script](./safe_hashes.sh) calculates the Safe transaction hashes by r
 2. Support for the Safe Client side API if the transaction API is down
 3. Support for using "raw" calldata to verify transaction hashes
 4. Support for using the Safe API for verifying transaction hashes before signing (using the `untrusted` flag)
+5. Works with 1-of-1 multisigs with the `--untrusted` flag
 
 ## Supported Networks
 
