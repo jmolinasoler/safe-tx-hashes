@@ -11,7 +11,7 @@
 This Bash [script](./safe_hashes.sh) calculates the Safe transaction hashes by retrieving transaction details from the [Safe transaction service API](https://docs.safe.global/core-api/transaction-service-overview) and computing both the domain and message hashes using the [EIP-712](https://eips.ethereum.org/EIPS/eip-712) standard.
 
 > [!NOTE]
-> This Bash [script](./safe_hashes.sh) relies on the [Safe transaction service API](https://docs.safe.global/core-api/transaction-service-overview), which requires transactions to be proposed and _logged_ in the service before they can be retrieved. Consequently, the initial transaction proposer cannot access the transaction at the proposal stage, making this approach incompatible with 1-of-1 multisigs.[^1]
+> As a temporary fix, since the Safe Transaction API is down, the tool now detechs if the API is down, and will use the client API instead of the Safe Transaction API. Offline mode still works great for those who are extra conscious!
 
 > [!IMPORTANT]
 > All Safe multisig versions starting from `0.1.0` and newer are supported.
@@ -44,8 +44,9 @@ This Bash [script](./safe_hashes.sh) calculates the Safe transaction hashes by r
 
 ## Differences from the Original Repo
 1. Support for not relying on the Safe API
-2. Support for using "raw" calldata to verify transaction hashes
-3. Support for using the Safe API for verifying transaction hashes before signing (using the `untrusted` flag)
+2. Support for the Safe Client side API if the transaction API is down
+3. Support for using "raw" calldata to verify transaction hashes
+4. Support for using the Safe API for verifying transaction hashes before signing (using the `untrusted` flag)
 
 ## Supported Networks
 
@@ -175,7 +176,7 @@ Now you can use the script from anywhere by just typing `safe_hashes`.
 ## Quickstart
 
 ```console
-./safe_hashes.sh [--help] [--list-networks] --network <network> --address <address> --nonce <nonce> --message <file>
+safe_hashes [--help] [--list-networks] --network <network> --address <address> --nonce <nonce> --message <file>
 ```
 
 > [!TIP]
@@ -184,7 +185,7 @@ Now you can use the script from anywhere by just typing `safe_hashes`.
 To enable _debug mode_, set the `DEBUG` environment variable to `true` before running the [script](./safe_hashes.sh):
 
 ```console
-DEBUG=true ./safe_hashes.sh ...
+DEBUG=true safe_hashes ...
 ```
 
 This will print each command before it is executed, which is helpful when troubleshooting.
@@ -195,22 +196,22 @@ Go ahead and run these!
 
 - Safe API: Already Initialized Transaction
 ```console
-./safe_hashes.sh --network arbitrum --address 0x111CEEee040739fD91D29C34C33E6B3E112F2177 --nonce 234
+safe_hashes --network arbitrum --address 0x111CEEee040739fD91D29C34C33E6B3E112F2177 --nonce 234
 ```
 
 - Safe API: Not Initialized Transaction
 ```console
-./safe_hashes.sh --network sepolia --address 0x86D46EcD553d25da0E3b96A9a1B442ac72fa9e9F --nonce 7 --untrusted
+safe_hashes --network sepolia --address 0x86D46EcD553d25da0E3b96A9a1B442ac72fa9e9F --nonce 7 --untrusted
 ```
 
 - Offline Mode: Transaction Hash
 ```console
-./safe_hashes.sh --offline --data 0x095ea7b3000000000000000000000000fe2f653f6579de62aaf8b186e618887d03fa31260000000000000000000000000000000000000000000000000000000000000001 --address 0x86D46EcD553d25da0E3b96A9a1B442ac72fa9e9F --network sepolia --nonce 6 --to 0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9
+safe_hashes --offline --data 0x095ea7b3000000000000000000000000fe2f653f6579de62aaf8b186e618887d03fa31260000000000000000000000000000000000000000000000000000000000000001 --address 0x86D46EcD553d25da0E3b96A9a1B442ac72fa9e9F --network sepolia --nonce 6 --to 0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9
 ```
 
 - Offline Mode: Message Hash
 ```console
-./safe_hashes.sh --network sepolia --address 0x657ff0D4eC65D82b2bC1247b0a558bcd2f80A0f1 --message message-example.txt --offline
+safe_hashes --network sepolia --address 0x657ff0D4eC65D82b2bC1247b0a558bcd2f80A0f1 --message message-example.txt --offline
 ```
 
 # Usage - Safe API Transaction Hash Verification
@@ -220,7 +221,7 @@ Go ahead and run these!
 To calculate the Safe transaction hashes for a specific transaction, you need to specify the `network`, `address`, and `nonce` parameters. An example:
 
 ```console
-./safe_hashes.sh --network arbitrum --address 0x111CEEee040739fD91D29C34C33E6B3E112F2177 --nonce 234
+safe_hashes --network arbitrum --address 0x111CEEee040739fD91D29C34C33E6B3E112F2177 --nonce 234
 ```
 
 The [script](./safe_hashes.sh) will output the domain, message, and Safe transaction hashes, allowing you to easily verify them against the values displayed on your Ledger hardware wallet screen:
@@ -265,12 +266,12 @@ Message hash: 0xD9109EA63C50ECD3B80B6B27ED5C5A9FD3D546C2169DFB69BFA7BA24CD14C7A5
 Safe transaction hash: 0x0cb7250b8becd7069223c54e2839feaed4cee156363fbfe5dd0a48e75c4e25b3
 ```
 
-> To see an example of a standard ETH transfer, run the command: `./safe_hashes.sh --network ethereum --address 0x8FA3b4570B4C96f8036C13b64971BA65867eEB48 --nonce 39` and review the output.
+> To see an example of a standard ETH transfer, run the command: `safe_hashes --network ethereum --address 0x8FA3b4570B4C96f8036C13b64971BA65867eEB48 --nonce 39` and review the output.
 
 To list all supported networks:
 
 ```console
-./safe_hashes.sh --list-networks
+safe_hashes --list-networks
 ```
 
 ## Not Initialized Transactions
@@ -290,10 +291,10 @@ You can optionally, run this script using the `--offline` subcommand.
 To calculate the Safe transaction hashes for a transaction that hasn't been initialized yet, or where you don't want to trust the safe transaction API, you can specify all the parameters. An example:
 
 ```console
-./safe_hashes.sh --offline --data 0x095ea7b3000000000000000000000000fe2f653f6579de62aaf8b186e618887d03fa31260000000000000000000000000000000000000000000000000000000000000001 --address 0x86D46EcD553d25da0E3b96A9a1B442ac72fa9e9F --network sepolia --nonce 6 --to 0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9
+safe_hashes --offline --data 0x095ea7b3000000000000000000000000fe2f653f6579de62aaf8b186e618887d03fa31260000000000000000000000000000000000000000000000000000000000000001 --address 0x86D46EcD553d25da0E3b96A9a1B442ac72fa9e9F --network sepolia --nonce 6 --to 0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9
 ```
 
-You can run `./safe_hashes.sh --offline --help` to see the available options.
+You can run `safe_hashes --offline --help` to see the available options.
 
 The [script](./safe_hashes.sh) will output the domain, message, and Safe transaction hashes, allowing you to easily verify them against the values displayed on your Ledger hardware wallet screen:
 
@@ -326,7 +327,7 @@ Safe transaction hash: 0x213be037275c94449a28b4edead76b0d63c7e12b52257f9d5686d98
 You can run this example to see the output.
 
 ```console
-./safe_hashes.sh --offline --data 0x095ea7b3000000000000000000000000fe2f653f6579de62aaf8b186e618887d03fa31260000000000000000000000000000000000000000000000000000000000000001 --address 0x86D46EcD553d25da0E3b96A9a1B442ac72fa9e9F --network sepolia --nonce 6 --to 0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9
+safe_hashes --offline --data 0x095ea7b3000000000000000000000000fe2f653f6579de62aaf8b186e618887d03fa31260000000000000000000000000000000000000000000000000000000000000001 --address 0x86D46EcD553d25da0E3b96A9a1B442ac72fa9e9F --network sepolia --nonce 6 --to 0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9
 ```
 
 
@@ -353,7 +354,7 @@ ea499f2f-fdbc-4d04-92c4-b60aba887e06
 Then, invoke the following command:
 
 ```console
-./safe_hashes.sh --network sepolia --address 0x657ff0D4eC65D82b2bC1247b0a558bcd2f80A0f1 --message message.txt
+safe_hashes --network sepolia --address 0x657ff0D4eC65D82b2bC1247b0a558bcd2f80A0f1 --message message.txt
 ```
 
 The [script](./safe_hashes.sh) will output the raw message, along with the domain, message, and Safe message hashes, allowing you to easily verify them against the values displayed on your Ledger hardware wallet screen:
@@ -420,8 +421,8 @@ bash test.sh
 > [!IMPORTANT]
 > Please be aware that user interface implementations may introduce additional trust assumptions, such as relying on `npm` dependencies that have not undergone thorough review. Always verify and cross-reference with the main [script](./safe_hashes.sh).
 
-- [`safehashpreview.com`](https://www.safehashpreview.com):
-  - Code: [`josepchetrit12/safe-tx-hashes-util`](https://github.com/josepchetrit12/safe-tx-hashes-util)
+- [`safeutils.openzeppelin.com`](https://safeutils.openzeppelin.com/):
+  - Code: [`openzeppelin/safe-utils`](https://github.com/openzeppelin/safe-utils)
   - Authors: [`josepchetrit12`](https://github.com/josepchetrit12), [`xaler5`](https://github.com/xaler5)
 
 # Acknowledgements
