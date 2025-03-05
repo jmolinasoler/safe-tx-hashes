@@ -11,7 +11,7 @@
 This Bash [script](./safe_hashes.sh) calculates the Safe transaction hashes by retrieving transaction details from the [Safe transaction service API](https://docs.safe.global/core-api/transaction-service-overview) and computing both the domain and message hashes using the [EIP-712](https://eips.ethereum.org/EIPS/eip-712) standard.
 
 > [!NOTE]
-> As a temporary fix, since the Safe Transaction API is down, the tool now detechs if the API is down, and will use the client API instead of the Safe Transaction API. Offline mode still works great for those who are extra conscious!
+> As a temporary fix, since the Safe Transaction API is down, the tool now detects if the API is down, and will use the client API instead of the Safe Transaction API. Offline mode still works great for those who are extra conscious!
 
 > [!IMPORTANT]
 > All Safe multisig versions starting from `0.1.0` and newer are supported.
@@ -211,7 +211,7 @@ docker run -it safe_hashes  [--help] [--list-networks] --network <network> --add
 
 ## Dev Container
 
-Optionally, to run this in a dev container in VSCode, first install the [dev containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers), then use the command pallete after cloning and run:
+Optionally, to run this in a dev container in VSCode, first install the [dev containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers), then use the command palette after cloning and run:
 
 ```
 > Dev Containers: Reopen in Container
@@ -326,7 +326,16 @@ safe_hashes --list-networks
 
 ## Not Initialized Transactions
 
-For transactions that have not been initialized yet, the steps are a little different. 
+For transactions that have not been initialized yet (i.e., not yet submitted to the Safe Transaction Service), use the `--untrusted` flag to bypass API validation. This allows you to verify transaction hashes during the signing process before formal submission.
+
+```sh 
+safe_hashes --network sepolia --address 0x86D46EcD553d25da0E3b96A9a1B442ac72fa9e9F --nonce 7 --untrusted
+```
+
+This mode:
+- Bypasses Safe Transaction Service API validation
+- Works with raw calldata/local parameters
+- Supports 1-of-1 multisig configurations
 
 # Usage - Offline 
 
