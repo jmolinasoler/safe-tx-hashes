@@ -326,16 +326,7 @@ safe_hashes --list-networks
 
 ## Not Initialized Transactions
 
-For transactions that have not been initialized yet (i.e., not yet submitted to the Safe Transaction Service), use the `--untrusted` flag to bypass API validation. This allows you to verify transaction hashes during the signing process before formal submission.
-
-```sh 
-safe_hashes --network sepolia --address 0x86D46EcD553d25da0E3b96A9a1B442ac72fa9e9F --nonce 7 --untrusted
-```
-
-This mode:
-- Bypasses Safe Transaction Service API validation
-- Works with raw calldata/local parameters
-- Supports 1-of-1 multisig configurations
+For transactions that have not been initialized yet, the steps are a little different.
 
 # Usage - Offline 
 
