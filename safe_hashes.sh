@@ -132,7 +132,7 @@ declare -A -r CHAIN_IDS=(
 )
 
 version() {
-    echo "safe_hashes 0.1.4"
+    echo "safe_hashes 0.1.5"
     exit 0
 }
 
@@ -353,6 +353,7 @@ get_version() {
 # Utility function to validate the Safe multisig version.
 validate_version() {
     local version=$1
+
     if [[ -z "$version" ]]; then
         echo "$(tput setaf 3)No Safe multisig contract found for the specified network. Please ensure that you have selected the correct network.$(tput setaf 0)"
         exit 0
@@ -507,8 +508,8 @@ get_api_url_and_response() {
         exit 1
     fi
     
-    echo "$api_url"
-    echo "$response_body"
+    # Keep this line like this to return the values
+    echo "$api_url $response_body"
 }
 
 # Utility function to retrieve the chain ID of the selected network.
@@ -653,13 +654,13 @@ calculate_safe_hashes() {
         esac
     done
 
+
     # Validation
     if [[ "$offline" == true && "$print_mst_calldata" == true ]]; then
         echo -e "${RED}Error: The --print-mst-calldata option is not supported in offline mode. Please remove it and try again.${RESET}" >&2
         exit 1
     fi
 
-    # Validate if the required parameters have the correct format.
     validate_network "$network"
     validate_address "$address"
     local chain_id=$(get_chain_id "$network")
@@ -668,6 +669,7 @@ calculate_safe_hashes() {
     # Only get api_url and version in online mode or for message files
     if [[ "$offline" != "true" || -n "$message_file" ]]; then
         # api_url=$(get_api_url_and_response "$network" "$address")
+
         read api_url response_body < <(get_api_url_and_response "$network" "$address")
 
         # Check if we're using the client API and need version from command line
@@ -684,6 +686,11 @@ calculate_safe_hashes() {
             fi
             # Extract version from the API response
             version=$(echo "$response_body" | jq -r ".version // \"0.0.0\"")
+
+            if [[ -z "$version" || "$version" == "0.0.0" ]]; then
+                version="$DEFAULT_OFFLINE_SAFE_VERSION"
+                echo -e "${YELLOW}Warning: Using default version 1.3.0${RESET}" >&2
+            fi
         fi
     fi
 
