@@ -486,9 +486,10 @@ Safe message hash: 0x1866b559f56261ada63528391b93a1fe8e2e33baf7cace94fc6b42202d1
 1. You trust my [script](./safe_hashes.sh) 😃.
 2. You trust Linux.
 3. You trust [Foundry](https://github.com/foundry-rs/foundry).
-4. You trust the [Safe transaction service API](https://docs.safe.global/core-api/transaction-service-overview).
+4. You trust that the `forge` alias on your machine is not malicious
+5. You trust the [Safe transaction service API](https://docs.safe.global/core-api/transaction-service-overview).
    1. Unless using [offline mode](#usage---offline)
-5. You trust your hardware wallet's screen.
+6. You trust your hardware wallet's screen.
    1. [Trezor](https://trezor.io/)
    2. [Keystone](https://keyst.one/)
    3. [Cypherock](https://www.cypherock.com/)
