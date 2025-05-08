@@ -1,3 +1,6 @@
+> [!NOTE]  
+> We will be deprecating this project in favor of the rust edition of this script. Head over to [safe-hash-rs](https://github.com/Cyfrin/safe-hash-rs)!
+
 *Original work from the [pcaversaccio/safe-tx-hashes-util](https://github.com/pcaversaccio/safe-tx-hashes-util) repo. This has been forked from there.*
 
 # Safe Multisig Transaction Hashes <!-- omit from toc -->
