@@ -209,7 +209,21 @@ docker build -t safe_hashes .
 ### Run
 
 ```console
-docker run -it safe_hashes  [--help] [--list-networks] --network <network> --address <address> --nonce <nonce> --message <file>
+docker run -it --rm --name safe_hashes_container safe_hashes  [--help] [--list-networks] --network <network> --address <address> --nonce <nonce> --message <file>
+```
+
+## Podman
+
+### Build
+
+```console
+podman build -t safe_hashes .
+```
+
+### Run
+
+```console
+podman run -it --rm --name safe_hashes_container safe_hashes  [--help] [--list-networks] --network <network> --address <address> --nonce <nonce> --message <file>
 ```
 
 ## Dev Container
